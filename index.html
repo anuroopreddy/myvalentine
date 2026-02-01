@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine?</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      position: relative;
+      width: 320px;
+      height: 220px;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      position: absolute;
+    }
+
+    #yesBtn {
+      background-color: #ff4d6d;
+      color: white;
+      left: 60px;
+      top: 140px;
+    }
+
+    #noBtn {
+      background-color: #ccc;
+      color: #333;
+      right: 60px;
+      top: 140px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Sushma, can you be my Valentine? ❤️</h1>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const card = document.querySelector(".card");
+
+    let dodgeCount = 0;
+    const maxDodges = Math.floor(Math.random() * 6) + 5; // 5–10
+
+    function moveYesButton() {
+      if (dodgeCount >= maxDodges) return;
+
+      dodgeCount++;
+
+      const maxX = card.offsetWidth - yesBtn.offsetWidth;
+      const maxY = card.offsetHeight - yesBtn.offsetHeight;
+
+      yesBtn.style.left = Math.random() * maxX + "px";
+      yesBtn.style.top = Math.random() * maxY + "px";
+    }
+
+    yesBtn.addEventListener("mouseenter", moveYesButton);
+    yesBtn.addEventListener("touchstart", moveYesButton);
+
+    noBtn.addEventListener("click", () => {
+      alert("Nice try 😏");
+    });
+
+    yesBtn.addEventListener("click", () => {
+      document.querySelector(".card").innerHTML =
+        "<h1>Yaaay!! ❤️💍<br>Happy Valentine’s Day!</h1>";
+      startConfetti();
+    });
+
+    // 🎉 Confetti Animation
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+
+    function randomColor() {
+      return `hsl(${Math.random() * 360}, 100%, 50%)`;
+    }
+
+    function startConfetti() {
+      for (let i = 0; i < 200; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 10 + 5,
+          color: randomColor()
+        });
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.y += p.d;
+        if (p.y > canvas.height) p.y = -10;
+      });
+      requestAnimationFrame(updateConfetti);
+    }
+  </script>
+
+</body>
+</html>
